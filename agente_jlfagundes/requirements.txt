@@ -2,3 +2,5 @@ google-adk
 py-trello
 datetime
 dotenv
+google-cloud-resource-manager
+google-cloud

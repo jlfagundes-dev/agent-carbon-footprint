@@ -1,0 +1,6 @@
+.env
+.lab_bootcamp_cit_dio/
+.adk/
+__pycache__/
+*.py[cod]
+session.db
