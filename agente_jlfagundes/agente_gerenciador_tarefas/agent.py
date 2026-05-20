@@ -73,7 +73,7 @@ def listar_tarefas_trello(status: str = "todas"):
         )
 
         boards = client.list_boards()
-        meu_board = [b for b in boards if b.name == NOME_BOARD_TRELLO][0]
+        meu_board = obter_board_trello(client)
         listas = meu_board.list_lists()
 
         # Filtra as listas com base no status fornecido
@@ -95,6 +95,62 @@ def listar_tarefas_trello(status: str = "todas"):
     except Exception as erro:
         raise RuntimeError(f'Erro ao listar tarefas no Trello: {erro}') from erro
 
+def mudar_status_tarefa(nome_da_task: str, novo_status: str) -> str:
+    try:
+        client = TrelloClient(
+            api_key=API_KEY_APP_TRELLO,
+            api_secret=SECRET_KEY_APP_TRELLO,
+            token=TOKEN_APP_TRELLO
+        )
+
+        boards = client.list_boards()
+        meu_board = obter_board_trello(client)
+        listas = meu_board.list_lists()
+                       
+        # Mapear status para listas
+        status_map = {
+            "a fazer": "A FAZER",
+            "em andamento": "EM ANDAMENTO",
+            "concluido": "CONCLUIDO"
+        }
+        
+        nome_lista_destino = status_map.get(novo_status.lower())
+
+        if not nome_lista_destino:
+            return f"❌ Status inválido. Use: 'a fazer', 'em andamento' ou 'concluido'"
+        
+        # Encontrar lista de destino
+        lista_destino = next(
+            (l for l in listas if l.name.upper() == nome_lista_destino.upper()), 
+            None
+        )
+
+        if not lista_destino:
+            return f"❌ Lista '{nome_lista_destino}' não encontrada no board"
+        
+         # Buscar card em todas as listas
+        card_encontrado = None
+        lista_origem = None
+
+        for lista in listas:
+            cards = lista.list_cards()
+            card_encontrado = next(
+                (c for c in cards if c.name.lower() == nome_da_task.lower()), 
+                None
+            )
+            if card_encontrado:
+                lista_origem = lista
+                break
+        
+        if not card_encontrado:
+            return f"❌ Card '{nome_da_task}' não encontrado"
+        
+        # Mover
+        card_encontrado.change_list(lista_destino.id)
+        return f"✅ '{nome_da_task}': {lista_origem.name} → {lista_destino.name}"
+    except Exception as e:
+        return f"❌ Erro: {str(e)}"
+    
 
 root_agent = Agent(
     model='gemini-2.5-flash',
@@ -114,5 +170,5 @@ root_agent = Agent(
             - Mover tarefas entre listas (ex: de "A Fazer" para "Em andamento" e de "Em andamento" para "Concluido").
             - Gerar contexto temporal (data e hora atual) para organizar tarefas do dia.
 """,
-    tools=[get_temporal_context, adicionar_tarefa_trello, listar_tarefas_trello],
+    tools=[get_temporal_context, adicionar_tarefa_trello, listar_tarefas_trello, mudar_status_tarefa],
 )
