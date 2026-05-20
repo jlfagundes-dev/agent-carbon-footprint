@@ -37,6 +37,47 @@ def adicionar_tarefa_trello(nome: str, descricao: str, due_date: str):
         due=due_date
     )
 
+def listar_tarefas_trello(status: str):
+    client = TrelloClient(
+        api_key=API_KEY_APP_TRELLO,
+        api_secret=SECRET_KEY_APP_TRELLO,
+        token=TOKEN_APP_TRELLO
+    )
+
+    boards = client.list_boards()
+    meu_board = [b for b in boards if b.name == NOME_BOARD_TRELLO][0]
+    listas = meu_board.list_lists()
+
+    # Filtrar as listas com base no status
+    if status.lower() == "todas":
+        listas_filtradas = listas
+    elif status.lower() == "a fazer":
+        listas_filtradas = [l for l in listas if l.name.upper() in ['A FAZER', 'TO DO', 'TODO']]
+    elif status.lower() == "em andamento":
+        listas_filtradas = [l for l in listas if l.name.upper() in ['EM ANDAMENTO', 'DOING']]
+    elif status.lower() == "concluido":
+        listas_filtradas = [l for l in listas if l.name.upper() in ['CONCLUÍDO', 'CONCLUIDO', 'DONE']]
+    else:
+        listas_filtradas = listas
+
+    # Coletar as tarefas das listas filtradas
+    tarefas = []
+
+    # Iterar sobre as listas filtradas e coletar as tarefas
+    for lista in listas_filtradas:
+        cards = lista.list_cards()
+        for card in cards:
+            tarefas.append({
+                "nome": card.name,
+                "descricao": card.desc,
+                "vencimento": card.due,
+                "status": lista.name,
+                "id": card.id
+            })
+    
+    return tarefas
+
+
 root_agent = Agent(
     model='gemini-2.5-flash',
     name='root_agent',
@@ -55,5 +96,5 @@ root_agent = Agent(
             - Mover tarefas entre listas (ex: de "A Fazer" para "Em andamento" e de "Em andamento" para "Concluido").
             - Gerar contexto temporal (data e hora atual) para organizar tarefas do dia.
 """,
-    tools=[get_temporal_context, adicionar_tarefa_trello],
+    tools=[get_temporal_context, adicionar_tarefa_trello, listar_tarefas_trello],
 )
