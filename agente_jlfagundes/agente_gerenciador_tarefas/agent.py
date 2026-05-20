@@ -12,70 +12,88 @@ SECRET_KEY_APP_TRELLO = os.getenv('SECRET_KEY_APP_TRELLO')
 TOKEN_APP_TRELLO = os.getenv('TOKEN_APP_TRELLO')
 NOME_BOARD_TRELLO = os.getenv('NOME_BOARD_TRELLO')
 
+
+def obter_board_trello(client: TrelloClient):
+    boards = client.list_boards()
+    meu_board = next((board for board in boards if board.name == NOME_BOARD_TRELLO), None)
+
+    if meu_board is None:
+        raise ValueError(f'Board "{NOME_BOARD_TRELLO}" não encontrado no Trello.')
+
+    return meu_board
+
+def filtrar_listas_por_status(listas, status: str):
+    status_normalizado = status.strip().lower()
+
+    if status_normalizado == 'todas':
+        return listas
+    elif status_normalizado == 'a fazer':
+        return [lista for lista in listas if lista.name.upper() in {'A FAZER', 'TO DO', 'TODO'}]
+    elif status_normalizado == 'em andamento':
+        return [lista for lista in listas if lista.name.upper() in {'EM ANDAMENTO', 'DOING'}]
+    elif status_normalizado == 'concluido':
+        return [lista for lista in listas if lista.name.upper() in {'CONCLUÍDO', 'CONCLUIDO', 'DONE'}]
+
+    return listas
+
 def get_temporal_context():
     now = datetime.now()
     return now.strftime('%Y/%m/%d %H:%M:%S')
 
 def adicionar_tarefa_trello(nome: str, descricao: str, due_date: str):
+    try:
+        client = TrelloClient(
+            api_key=API_KEY_APP_TRELLO,
+            api_secret=SECRET_KEY_APP_TRELLO,
+            token=TOKEN_APP_TRELLO
+        )
 
-    client = TrelloClient(
-        api_key=API_KEY_APP_TRELLO,
-        api_secret=SECRET_KEY_APP_TRELLO,
-        token=TOKEN_APP_TRELLO
-    )
-    
-    client.list_boards()
-    boards = client.list_boards()
-    meu_board = [b for b in boards if b.name == NOME_BOARD_TRELLO][0]
+        meu_board = obter_board_trello(client)
+        listas = meu_board.list_lists()
+        # usando o next para tratar erro caso a lista "A FAZER" não seja encontrada
+        minha_lista = next((lista for lista in listas if lista.name.upper() == 'A FAZER'), None)
 
-    listas = meu_board.list_lists()
-    minha_lista = [l for l in listas if l.name.upper()== 'A FAZER'][0]
-    
-    minha_lista.add_card(
-        name=nome,
-        desc=descricao,
-        due=due_date
-    )
+        if minha_lista is None:
+            raise ValueError('Lista "A FAZER" não encontrada no board do Trello.')
 
-def listar_tarefas_trello(status: str):
-    client = TrelloClient(
-        api_key=API_KEY_APP_TRELLO,
-        api_secret=SECRET_KEY_APP_TRELLO,
-        token=TOKEN_APP_TRELLO
-    )
+        minha_lista.add_card(
+            name=nome,
+            desc=descricao,
+            due=due_date
+        )
+    except Exception as erro:
+        raise RuntimeError(f'Erro ao adicionar tarefa no Trello: {erro}') from erro
 
-    boards = client.list_boards()
-    meu_board = [b for b in boards if b.name == NOME_BOARD_TRELLO][0]
-    listas = meu_board.list_lists()
+def listar_tarefas_trello(status: str = "todas"):
+    try:
+        client = TrelloClient(
+            api_key=API_KEY_APP_TRELLO,
+            api_secret=SECRET_KEY_APP_TRELLO,
+            token=TOKEN_APP_TRELLO
+        )
 
-    # Filtrar as listas com base no status
-    if status.lower() == "todas":
-        listas_filtradas = listas
-    elif status.lower() == "a fazer":
-        listas_filtradas = [l for l in listas if l.name.upper() in ['A FAZER', 'TO DO', 'TODO']]
-    elif status.lower() == "em andamento":
-        listas_filtradas = [l for l in listas if l.name.upper() in ['EM ANDAMENTO', 'DOING']]
-    elif status.lower() == "concluido":
-        listas_filtradas = [l for l in listas if l.name.upper() in ['CONCLUÍDO', 'CONCLUIDO', 'DONE']]
-    else:
-        listas_filtradas = listas
+        boards = client.list_boards()
+        meu_board = [b for b in boards if b.name == NOME_BOARD_TRELLO][0]
+        listas = meu_board.list_lists()
 
-    # Coletar as tarefas das listas filtradas
-    tarefas = []
+        # Filtra as listas com base no status fornecido
+        listas_filtradas = filtrar_listas_por_status(listas, status)
 
-    # Iterar sobre as listas filtradas e coletar as tarefas
-    for lista in listas_filtradas:
-        cards = lista.list_cards()
-        for card in cards:
-            tarefas.append({
-                "nome": card.name,
-                "descricao": card.desc,
-                "vencimento": card.due,
-                "status": lista.name,
-                "id": card.id
-            })
-    
-    return tarefas
+        tarefas = []
+
+        for lista in listas_filtradas:
+            for card in lista.list_cards():
+                tarefas.append({
+                    "nome": card.name,
+                    "descricao": card.desc,
+                    "vencimento": card.due,
+                    "status": lista.name,
+                    "id": card.id
+                })
+
+        return tarefas
+    except Exception as erro:
+        raise RuntimeError(f'Erro ao listar tarefas no Trello: {erro}') from erro
 
 
 root_agent = Agent(
