@@ -6,7 +6,7 @@
       src="https://raw.githubusercontent.com/digitalinnovationone/template-github-trilha/main/.github/assets/logo.webp" 
       width="100px" 
     />
-    <h1>Título do Curso ou Projeto</h1>
+    <h1>Bootcamp CI&T - Do Prompt ao Agente — Agente de Gerenciamento de Tarefas</h1>
   </p>
 </div>
 <!--END_SECTION:header-->
@@ -22,32 +22,26 @@
 <thead>
   <tr>
     <td>
-        <p align="center">Expert</p>
-        <a href="https://github.com/felipeAguiarCode">
-        <img src="https://avatars0.githubusercontent.com/u/37452836?v=3&s=115" alt="@felipeAguiarCode"><br>
+        <p align="center">Sobre mim</p>
+        <a href="https://github.com/jlfagundes-dev">
+        <img src="https://avatars.githubusercontent.com/u/233575773?v=4" alt="@jlfagundes-dev" width="100px"><br>
       </a>
     </td>
     <td colspan="3">
-    <p>🎉 10y+ em sistemas comerciais com .NET C# e NODE.JS.
+    <br/>
+    <p>💻 3y+ Full Stack corporativo com .NET C#, Node.js e Angular.
       <br/>
-     🌟 Desenvolvedor fullstack - Coordenador de educação na DIO
+     🎯 Transição de carreira consolidada após 14y na área comercial e de vendas.
       <br/>
-    👨‍💻 Foco em front-ends SPA com React, Angular e Vue.js
+    🤖 Foco em Data Engineering, Inteligência Artificial e Agentes de IA.
     </p>
       <a 
-      href="https://www.linkedin.com/in/felipe-me/" 
+      href="https://www.linkedin.com/in/jlfagundes/" 
       align="center">
            <img 
             align="center" 
             alt="Material de Apoio" 
             src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"
-            >
-        </a>
-        <a href="https://www.instagram.com/felipeaguiar.exe/" target="_blank">
-            <img 
-              align="center" 
-              alt="Instagram" 
-              src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white"
             >
         </a>
     </td>
@@ -61,42 +55,33 @@
 
 ## 💻 Sobre o Projeto
 
-Vamos construir uma página spa, responsiva, para usar em diversos tipos de micro, pequena e média empresas. Contém as seguintes seções: Header, Navigation, Home, Sobre, Serviços, Depoimentos, Contato e Footer que faz xxx e yyy
+Este repositório reúne o projeto do Bootcamp "Do Prompt ao Agente" (parceria CI&T + DIO). O objetivo principal desta fase é desenvolver um agente em Python que automatize um fluxo de trabalho real: gerenciar tarefas no Trello integrando lógica de automação, APIs externas e modelos de IA — explorando o Google ADK (Agent Development Kit).
+
+## 🔎 Descrição do Desafio
+
+Desenvolver um agente em Python capaz de automatizar tarefas e etapas de um fluxo de trabalho. Neste projeto o agente:
+
+- Cria, atualiza e organiza cartões no Trello conforme regras e prioridades definidas.
+- Orquestra etapas do fluxo (p.ex. mover cartões entre listas, atribuir responsáveis, adicionar checklists e comentários com resultados de análises).
+- Integra com APIs externas e usa lógica IA para priorização e sugestões (prototipado com o Google ADK).
 
 ## 📚 Pré-requisitos de Habilidades e Níveis de Conhecimento
 
-Antes de ingressar neste conteúdo, é necessário possuir conhecimento prévio nas seguintes áreas:
+Para reproduzir este projeto, recomenda-se o seguinte nível de conhecimento:
 
-- [habilidades ou conhecimentos prévios necessários] | [Básico, Intermediário, Avançado ou Especialista]
-
-- _Exemplo_:
-
-  - Java | Básico
-  - Gerenciamento de pacotes | Básico
-  -
-
-- [Outros pré-requisitos, se aplicável]
-
-- _Exemplo_:
-  - Lógica de programação
-  - Javascript
-
-## 🛠️ Habilidades e Sub-habilidades que vamos aprender neste conteúdo
-
-- [Lista das habilidades principais a serem desenvolvidas]
-
-  - [Subhabilidades relacionadas, se aplicável]
-
-- _Exemplo_:
-  - Java
-    - Api Rest
+- **Python**: Básico/Intermediário — sintaxe, pacotes, virtualenv/venv.
+- **APIs REST / HTTP & JSON**: Básico — entender requisições, cabeçalhos, tokens e payloads.
+- **Integração com APIs (Trello)**: Básico — criação de chaves, uso de endpoints CRUD.
+- **Conceitos de IA / LLMs**: Básico — noções de prompts, chamadas a modelos e segurança de dados.
+- **Google ADK (Agent Development Kit)**: Básico — noções de comandos para criação de agentes .
+- **Git e GitHub**: Básico — commits, branches, PRs.
+- **Noções de DevOps / Ambiente local**: Básico — criação de ambientes, variáveis de ambiente e gestão de dependências.
 
 ## 🎯 Objetivos e Resultados Esperados
 
-Após a conclusão do curso/projeto, os estudantes estarão aptos a:
-
-- [Descrição do que os estudantes serão capazes de fazer]
-- [Projetos ou soluções que os estudantes estarão aptos a construir]
+- Entregar um agente funcional que demonstre integração entre Python, Trello API e Google ADK.
+- Mostrar capacidade de automação de processos: redução de tarefas manuais, consistência operacional e maior produtividade.
+- Produzir documentação clara e profissional (README, instruções de uso, decisões de arquitetura) voltada para avaliadores técnicos e recrutadores de RH.
 
 <!--START_SECTION:footer-->
 
