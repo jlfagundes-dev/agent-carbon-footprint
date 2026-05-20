@@ -1,4 +1,20 @@
 from google.adk.agents.llm_agent import Agent
+from trello import TrelloClient
+from dotenv import load_dotenv
+from datetime import datetime
+import os
+
+load_dotenv()
+
+# Credenciais do Trello
+API_KEY_APP_TRELLO = os.getenv('API_KEY_APP_TRELLO')
+SECRET_KEY_APP_TRELLO = os.getenv('SECRET_KEY_APP_TRELLO')
+TOKEN_APP_TRELLO = os.getenv('TOKEN_APP_TRELLO')
+NOME_BOARD_TRELLO = os.getenv('NOME_BOARD_TRELLO')
+
+def get_temporal_context():
+    now = datetime.now()
+    return now.strftime('%Y/%m/%d %H:%M:%S')
 
 root_agent = Agent(
     model='gemini-2.5-flash',
