@@ -16,6 +16,27 @@ def get_temporal_context():
     now = datetime.now()
     return now.strftime('%Y/%m/%d %H:%M:%S')
 
+def adicionar_tarefa_trello(nome: str, descricao: str, due_date: str):
+
+    client = TrelloClient(
+        api_key=API_KEY_APP_TRELLO,
+        api_secret=SECRET_KEY_APP_TRELLO,
+        token=TOKEN_APP_TRELLO
+    )
+    
+    client.list_boards()
+    boards = client.list_boards()
+    meu_board = [b for b in boards if b.name == NOME_BOARD_TRELLO][0]
+
+    listas = meu_board.list_lists()
+    minha_lista = [l for l in listas if l.name.upper()== 'A FAZER'][0]
+    
+    minha_lista.add_card(
+        name=nome,
+        desc=descricao,
+        due=due_date
+    )
+
 root_agent = Agent(
     model='gemini-2.5-flash',
     name='root_agent',
@@ -34,4 +55,5 @@ root_agent = Agent(
             - Mover tarefas entre listas (ex: de "A Fazer" para "Em andamento" e de "Em andamento" para "Concluido").
             - Gerar contexto temporal (data e hora atual) para organizar tarefas do dia.
 """,
+    tools=[get_temporal_context, adicionar_tarefa_trello],
 )
